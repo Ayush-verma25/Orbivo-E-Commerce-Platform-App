@@ -1,0 +1,415 @@
+import { randomBytes } from "node:crypto";
+import { Response } from "express";
+import { AuthenticatedRequest } from "../middleware/auth.js";
+import { prisma } from "../config/prisma.js";
+import type { Prisma } from "../generated/prisma/client.js";
+
+const generateOrderNumber = () =>
+  `ORD-${Date.now().toString(36).toUpperCase()}-${randomBytes(16).toString("hex").toUpperCase()}`;
+
+class OrderCreationError extends Error {
+  constructor(
+    public statusCode: number,
+    message: string,
+  ) {
+    super(message);
+  }
+}
+
+const findStore = (where: { slug?: string; id?: number }) =>
+  prisma.stores.findUnique({ where: where as any });
+
+export const createOrder = async (
+  req: AuthenticatedRequest,
+  res: Response,
+): Promise<void> => {
+  try {
+    const {
+      storeSlug,
+      storeId,
+      items,
+      customerName,
+      customerEmail,
+      customerPhone,
+      shippingAddress,
+    } = req.body ?? {};
+
+    if (!Array.isArray(items) || items.length === 0) {
+      res.status(400).json({ success: false, message: "No items in order" });
+      return;
+    }
+
+    if (
+      items.some((item) => !Number.isInteger(item?.quantity) || item.quantity < 1)
+    ) {
+      res.status(400).json({
+        success: false,
+        message: "Each item quantity must be an integer of at least one",
+      });
+      return;
+    }
+
+    if (
+      items.some(
+        (item) =>
+          !Number.isInteger(Number(item?.productId)) || Number(item.productId) < 1,
+      )
+    ) {
+      res.status(400).json({
+        success: false,
+        message: "Each item must have a valid product ID",
+      });
+      return;
+    }
+
+    if (!customerName || !customerEmail || !shippingAddress) {
+      res.status(400).json({
+        success: false,
+        message: "Customer name, email, and shipping address are required",
+      });
+      return;
+    }
+
+    const targetStore = storeSlug
+      ? await findStore({ slug: storeSlug })
+      : storeId
+        ? await findStore({ id: Number(storeId) })
+        : null;
+
+    if (!targetStore) {
+      res.status(404).json({ success: false, message: "Store not found" });
+      return;
+    }
+
+    if (targetStore.status === "suspended") {
+      res
+        .status(403)
+        .json({ success: false, message: "This store is suspended" });
+      return;
+    }
+
+    const order = await prisma.$transaction(async (tx) => {
+      let subtotal = 0;
+      const processedItems = [];
+
+      for (const item of items) {
+        const productId = Number(item.productId);
+        const product = await tx.products.findFirst({
+          where: { id: productId, store_id: targetStore.id, status: "active" },
+        });
+        if (!product) {
+          throw new OrderCreationError(
+            404,
+            `Product ${item.name || item.productId} is no longer available`,
+          );
+        }
+
+        const qty = item.quantity;
+        const stockUpdate = await tx.products.updateMany({
+          where: {
+            id: product.id,
+            store_id: targetStore.id,
+            status: "active",
+            stock: { gte: qty },
+          },
+          data: { stock: { decrement: qty } },
+        });
+        if (stockUpdate.count !== 1) {
+          throw new OrderCreationError(
+            400,
+            `Not enough stock for ${item.name || product.name}. Available: ${product.stock ?? 0}`,
+          );
+        }
+
+        const itemPrice = Number(product.price);
+        subtotal += itemPrice * qty;
+        const images = Array.isArray(product.images)
+          ? (product.images as string[])
+          : [];
+
+        processedItems.push({
+          productId: product.id,
+          name: product.name,
+          price: itemPrice,
+          quantity: qty,
+          variant: item.variant || null,
+          image: images[0] || null,
+        });
+      }
+
+      const shippingFee = Number(targetStore.shipping_fee) || 0;
+      const freeThreshold = Number(targetStore.free_shipping_threshold) || 0;
+      const shippingCost =
+        freeThreshold > 0 && subtotal >= freeThreshold ? 0 : shippingFee;
+      const total = Math.max(0, subtotal + shippingCost);
+      const customerId = req.user?.id || null;
+
+      return tx.orders.create({
+        data: {
+          order_number: generateOrderNumber(),
+          store_id: targetStore.id,
+          customer_id: customerId,
+          customer_name: customerName.trim(),
+          customer_email: customerEmail.trim().toLowerCase(),
+          customer_phone: customerPhone || null,
+          shipping_address: shippingAddress,
+          items: processedItems,
+          subtotal,
+          discount: 0,
+          shipping_cost: shippingCost,
+          total,
+          coupon_code: null,
+          payment_status: "pending",
+          payment_method: "cod",
+          order_status: "placed",
+        },
+      });
+    });
+
+    res
+      .status(201)
+      .json({ success: true, message: "Order created successfully", order });
+  } catch (error: any) {
+    if (error instanceof OrderCreationError) {
+      res.status(error.statusCode).json({ success: false, message: error.message });
+      return;
+    }
+    console.error("createOrder error:", error);
+    res.status(500).json({ success: false, message: "Failed to create order" });
+  }
+};
+
+export const getMerchantOrders = async (
+  req: AuthenticatedRequest,
+  res: Response,
+): Promise<void> => {
+  try {
+    const store = await prisma.stores.findFirst({
+      where: { merchant_id: req.user?.id },
+    });
+
+    if (!store) {
+      res.status(404).json({ success: false, message: "Store not found" });
+      return;
+    }
+
+    const { status } = req.query;
+
+    const orders = await prisma.orders.findMany({
+      where: {
+        store_id: store.id,
+        ...(status ? { order_status: status as string } : {}),
+      },
+      orderBy: { created_at: "desc" },
+    });
+
+    res.status(200).json({ success: true, orders });
+  } catch (error: any) {
+    console.error("getMerchantOrders error:", error);
+    res
+      .status(500)
+      .json({ success: false, message: "Failed to fetch merchant orders" });
+  }
+};
+
+export const updateOrderStatus = async (
+  req: AuthenticatedRequest,
+  res: Response,
+): Promise<void> => {
+  try {
+    const id = Number(req.params.id);
+    const { order_status, tracking_number, payment_status } = req.body ?? {};
+
+    if (!Number.isInteger(id)) {
+      res.status(400).json({ success: false, message: "Invalid order ID" });
+      return;
+    }
+
+    const orderStatuses = [
+      "placed", "confirmed", "processing", "shipped", "delivered", "cancelled",
+    ];
+    const paymentStatuses = ["pending", "paid", "failed", "refunded"];
+    if (
+      (order_status !== undefined && !orderStatuses.includes(order_status)) ||
+      (payment_status !== undefined && !paymentStatuses.includes(payment_status))
+    ) {
+      res.status(400).json({
+        success: false,
+        message: "Invalid order or payment status",
+      });
+      return;
+    }
+
+    if (
+      tracking_number !== undefined &&
+      (typeof tracking_number !== "string" || tracking_number.length > 100)
+    ) {
+      res.status(400).json({
+        success: false,
+        message: "Tracking number must be a string no longer than 100 characters",
+      });
+      return;
+    }
+
+    const store = await prisma.stores.findFirst({
+      where: { merchant_id: req.user?.id },
+    });
+
+    if (!store) {
+      res.status(404).json({ success: false, message: "Store not found" });
+      return;
+    }
+
+    const existing = await prisma.orders.findFirst({
+      where: { id, store_id: store.id },
+    });
+
+    if (!existing) {
+      res.status(404).json({ success: false, message: "Order not found" });
+      return;
+    }
+
+    const updated = await prisma.orders.update({
+      where: { id },
+      data: {
+        order_status: order_status || existing.order_status,
+        tracking_number:
+          tracking_number !== undefined
+            ? tracking_number
+            : existing.tracking_number,
+        payment_status: payment_status || existing.payment_status,
+      },
+    });
+
+    res.json({
+      success: true,
+      message: "Order updated successfully",
+      order: updated,
+    });
+  } catch (error: any) {
+    console.error("updateOrderStatus error:", error);
+    res
+      .status(500)
+      .json({ success: false, message: "Failed to update order status" });
+  }
+};
+
+export const getOrderReceipt = async (
+  req: AuthenticatedRequest,
+  res: Response,
+): Promise<void> => {
+  try {
+    const ident = String(req.params.orderIdentifier);
+    const raw = await prisma.orders.findFirst({
+      where: { order_number: ident },
+      include: {
+        stores: {
+          select: {
+            name: true,
+            slug: true,
+            currency: true,
+            logo_url: true,
+            banner_url: true,
+            accent_color: true,
+          },
+        },
+      },
+    });
+
+    if (!raw) {
+      res.status(404).json({ success: false, message: "Order not found" });
+      return;
+    }
+
+    const { stores, ...rest } = raw;
+    res.json({
+      success: true,
+      order: {
+        ...rest,
+        store_name: stores?.name || null,
+        store_slug: stores?.slug || null,
+        store_currency: stores?.currency || "USD",
+        store_logo_url: stores?.logo_url || null,
+        store_accent_color: stores?.accent_color || "#059669",
+      },
+    });
+  } catch (error: any) {
+    console.error("getOrderReceipt error:", error);
+    res
+      .status(500)
+      .json({ success: false, message: "Failed to get order receipt" });
+  }
+};
+
+export const getCustomerOrders = async (
+  req: AuthenticatedRequest,
+  res: Response,
+): Promise<void> => {
+  try {
+    if (!req.user) {
+      res
+        .status(401)
+        .json({ success: false, message: "Authentication required" });
+      return;
+    }
+
+    const { id: userId, email: userEmail } = req.user;
+    const { storeSlug, storeId } = req.query!;
+
+    const targetStore = storeSlug
+      ? await findStore({
+          slug: String(storeSlug),
+        })
+      : storeId
+        ? await findStore({
+            id: Number(storeId),
+          })
+        : null;
+
+    const whereClause: Prisma.ordersWhereInput = {
+      OR: [
+        { customer_id: userId },
+        ...(userEmail
+          ? [
+              {
+                customer_email: {
+                  equals: userEmail,
+                  mode: "insensitive" as const,
+                },
+              },
+            ]
+          : []),
+      ],
+    };
+
+    if (storeSlug || storeId) {
+      if (!targetStore) {
+        res.status(404).json({ success: false, message: "Store not found" });
+        return;
+      }
+      whereClause.store_id = targetStore.id;
+    }
+
+    const rawOrders = await prisma.orders.findMany({
+      where: whereClause,
+      include: {
+        stores: { select: { name: true, slug: true, currency: true } },
+      },
+      orderBy: { created_at: "desc" },
+    });
+
+    const orders = rawOrders.map(({ stores, ...rest }) => ({
+      ...rest,
+      store_name: stores?.name || null,
+      store_slug: stores?.slug || null,
+      store_currency: stores?.currency || "USD",
+    }));
+
+    res.json({ success: true, orders });
+  } catch (error: any) {
+    console.error("getCustomerOrders error:", error);
+    res
+      .status(500)
+      .json({ success: false, message: "Failed to get customer orders" });
+  }
+};
