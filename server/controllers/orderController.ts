@@ -382,7 +382,11 @@ export const getCustomerOrders = async (
       ],
     };
 
-    if (targetStore) {
+    if (storeSlug || storeId) {
+      if (!targetStore) {
+        res.status(404).json({ success: false, message: "Store not found" });
+        return;
+      }
       whereClause.store_id = targetStore.id;
     }
 
