@@ -1,12 +1,12 @@
 import "dotenv/config";
 import express, { NextFunction, Request, Response } from "express";
 import cors from "cors";
-import categoryRoutes from "./routes/categoryRoutes.ts";
-import uploadRouter from "./routes/uploadRoutes.ts";
-import storeRouter from "./routes/storeRoutes.ts";
-import productRouter from "./routes/productRoutes.ts";
-import orderRouter from "./routes/orderRoutes.ts";
-import analyticsRoutes from "./routes/analyticsRoutes.ts";
+import categoryRoutes from "./routes/categoryRoutes.js";
+import uploadRouter from "./routes/uploadRoutes.js";
+import storeRouter from "./routes/storeRoutes.js";
+import productRouter from "./routes/productRoutes.js";
+import orderRouter from "./routes/orderRoutes.js";
+import analyticsRoutes from "./routes/analyticsRoutes.js";
 
 const app = express();
 
