@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 import { createRemoteJWKSet, jwtVerify, decodeJwt } from "jose";
-import { findNeonUser } from "../services/neonUser.ts";
-import { prisma } from "../config/prisma.ts";
+import { findNeonUser } from "../services/neonUser.js";
+import { prisma } from "../config/prisma.js";
 
 export interface AuthUser {
   id: string;
