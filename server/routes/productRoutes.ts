@@ -1,12 +1,12 @@
 import { Router } from "express";
-import { requireAuth, requireRole } from "../middleware/auth.ts";
+import { requireAuth, requireRole } from "../middleware/auth.js";
 import {
   createProduct,
   deleteProduct,
   getMerchantProducts,
   getProducts,
   updateProduct,
-} from "../controllers/productController.ts";
+} from "../controllers/productController.js";
 
 const productRouter = Router();
 
