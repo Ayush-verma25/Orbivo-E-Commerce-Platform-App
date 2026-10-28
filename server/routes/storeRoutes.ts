@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { requireAuth, requireRole } from "../middleware/auth.js";
+import { requireAuth, requireRole } from "../middleware/auth.ts";
 import {
   createStore,
   getAllMerchants,
@@ -8,7 +8,7 @@ import {
   onboardMerchant,
   toggelStoreStatus,
   updateMyStore,
-} from "../controllers/storeController.js";
+} from "../controllers/storeController.ts";
 
 const storeRouter = Router();
 
