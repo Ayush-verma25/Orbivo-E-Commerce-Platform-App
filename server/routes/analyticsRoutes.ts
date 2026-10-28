@@ -1,9 +1,9 @@
 import { Router } from "express";
-import { requireAuth, requireRole } from "../middleware/auth.js";
+import { requireAuth, requireRole } from "../middleware/auth.ts";
 import {
   getMerchantAnalytics,
   getPlatformAnalytics,
-} from "../controllers/analyticsController.js";
+} from "../controllers/analyticsController.ts";
 
 const analyticsRoutes = Router();
 
