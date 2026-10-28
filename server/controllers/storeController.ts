@@ -5,7 +5,7 @@ import {
   findNeonMerchants,
   findNeonUsersByIds,
   updateNeonUserRole,
-} from "../services/neonUser.js";
+} from "../services/neonUser.ts";
 
 // Help to generate clean slug
 const generateSlug = (text: string) =>
