@@ -11,6 +11,7 @@ import {
 } from "../../components/merchant/settings/StoreHeroStyleSelector";
 import { StoreAccentColorSelector } from "../../components/merchant/settings/StoreAccentColorSelector";
 import { api } from "../../config/api";
+import { DEFAULT_ACCENT_COLOR } from "../../utils/storeAccent";
 
 export const SettingsPage: React.FC = () => {
   const { store, setStore } = useAuth();
@@ -23,7 +24,8 @@ export const SettingsPage: React.FC = () => {
   const [shippingFee, setShippingFee] = useState("0");
   const [freeShippingThreshold, setFreeShippingThreshold] = useState("0");
   const [heroStyle, setHeroStyle] = useState<HeroStyleType>("hero1");
-  const [accentColor, setAccentColor] = useState("#059669");
+  const [accentColor, setAccentColor] = useState(DEFAULT_ACCENT_COLOR);
+  const initializedFromStore = useRef(false);
 
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -43,7 +45,8 @@ export const SettingsPage: React.FC = () => {
   }, []);
 
   useEffect(() => {
-    if (store) {
+    if (store && !initializedFromStore.current) {
+      initializedFromStore.current = true;
       setName(store.name || "");
       setDescription(store.description || "");
       setCurrency(store.currency || "USD");
@@ -54,7 +57,7 @@ export const SettingsPage: React.FC = () => {
         store.free_shipping_threshold?.toString() || "0",
       );
       setHeroStyle((store.hero_style as HeroStyleType) || "hero1");
-      setAccentColor(store.accent_color || "#ff9500");
+      setAccentColor(store.accent_color || DEFAULT_ACCENT_COLOR);
       setLoading(false);
     }
   }, [store]);

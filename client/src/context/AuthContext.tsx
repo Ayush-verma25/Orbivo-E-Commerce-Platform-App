@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
+import { isAxiosError } from "axios";
 import { authClient } from "../auth";
 import { api } from "../config/api";
 
@@ -52,7 +53,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   const refreshMe = async () => {
     try {
       // Check active session directly via Neon Auth client
-      const sessionRes = await authClient.getSession().catch(() => null);
+      const sessionRes = await authClient.getSession();
+      if (sessionRes.error) throw sessionRes.error;
       const activeSession = sessionRes?.data?.session;
       const activeNeonUser = sessionRes?.data?.user;
 
@@ -96,6 +98,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
       }
 
       let resolvedStore: Store | null = null;
+      let preserveStore = false;
       // Admin accounts cannot have stores or be merchants
       if (initialRole !== "admin") {
         try {
@@ -104,26 +107,26 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
             resolvedStore = storeRes.data.store;
             initialRole = "merchant";
           }
-        } catch {
-          resolvedStore = null;
+        } catch (error) {
+          preserveStore = !isAxiosError(error) || error.response?.status !== 404;
         }
       }
 
-      setUser({
+      setUser((previousUser) => ({
         id: activeNeonUser.id,
         name: activeNeonUser.name || activeNeonUser.email.split("@")[0],
         email: activeNeonUser.email,
-        role: initialRole,
-        store_id: initialRole === "admin" ? null : resolvedStore?.id || null,
-      });
+        role: preserveStore ? previousUser?.role || initialRole : initialRole,
+        store_id: preserveStore
+          ? previousUser?.store_id ?? null
+          : initialRole === "admin" ? null : resolvedStore?.id || null,
+      }));
 
-      setStore(initialRole === "admin" ? null : resolvedStore);
+      if (!preserveStore) {
+        setStore(initialRole === "admin" ? null : resolvedStore);
+      }
     } catch (err) {
       console.error("Error refreshing auth session", err);
-      localStorage.removeItem("Cartiva_token");
-      setUser(null);
-      setStore(null);
-      setToken(null);
     } finally {
       setLoading(false);
     }

@@ -224,18 +224,6 @@ export const ProductModal: React.FC<ProductModalProps> = ({
                         }}
                     />
 
-                    {/* AI Image Studio Modal */}
-                    <ProductAiImageModal
-                        isOpen={aiStudioOpen}
-                        onClose={() => setAiStudioOpen(false)}
-                        images={formImages}
-                        selectedImageIndex={aiStudioInitialIndex}
-                        productName={formName}
-                        onAddImage={onAddTransformedImage}
-                        onReplaceImage={onReplaceImage}
-                        onAddColorVariantOption={onAddColorVariantOption}
-                    />
-
                     {/* Variants Manager */}
                     <ProductVariantBuilder
                         variants={formVariants}
@@ -263,6 +251,17 @@ export const ProductModal: React.FC<ProductModalProps> = ({
                         </button>
                     </div>
                 </form>
+                {/* AI Image Studio Modal */}
+                <ProductAiImageModal
+                    isOpen={aiStudioOpen}
+                    onClose={() => setAiStudioOpen(false)}
+                    images={formImages}
+                    selectedImageIndex={aiStudioInitialIndex}
+                    productName={formName}
+                    onAddImage={onAddTransformedImage}
+                    onReplaceImage={onReplaceImage}
+                    onAddColorVariantOption={onAddColorVariantOption}
+                />
             </div>
         </div>
     );
