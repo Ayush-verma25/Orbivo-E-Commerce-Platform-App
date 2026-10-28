@@ -1,11 +1,11 @@
 import { Response } from "express";
-import { AuthenticatedRequest } from "../middleware/auth.ts";
-import { prisma } from "../config/prisma.ts";
+import { AuthenticatedRequest } from "../middleware/auth.js";
+import { prisma } from "../config/prisma.js";
 import {
   findNeonMerchants,
   findNeonUsersByIds,
   updateNeonUserRole,
-} from "../services/neonUser.ts";
+} from "../services/neonUser.js";
 
 // Help to generate clean slug
 const generateSlug = (text: string) =>
