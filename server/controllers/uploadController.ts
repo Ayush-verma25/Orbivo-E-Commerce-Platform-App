@@ -317,7 +317,9 @@ export const aiOnModel = async (req: Request, res: Response): Promise<void> => {
     // Validate both inputs before either can trigger a remote upload.
     const cloudName = cloudinary.config().cloud_name;
     const modelSource =
-      modelImageUrl === undefined ? defaultModel : modelImageUrl;
+      !modelImageUrl || typeof modelImageUrl !== "string" || !modelImageUrl.trim()
+        ? defaultModel
+        : modelImageUrl.trim();
     validateImageUrl(productImageUrl, cloudName);
     validateImageUrl(modelSource, cloudName);
 

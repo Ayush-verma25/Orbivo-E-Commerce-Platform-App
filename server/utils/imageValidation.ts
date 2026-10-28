@@ -2,26 +2,63 @@ import { fileTypeFromBuffer } from "file-type";
 
 export class ImageInputError extends Error {}
 
-// Keep external sources limited to the CDN used by the default model image.
-const externalImageHosts = new Set(["images.unsplash.com"]);
+function isPrivateHost(hostname: string): boolean {
+  const lower = hostname.toLowerCase();
+  if (
+    lower === "localhost" ||
+    lower.endsWith(".local") ||
+    lower.endsWith(".internal") ||
+    lower.endsWith(".lan") ||
+    lower === "127.0.0.1" ||
+    lower === "::1" ||
+    lower === "0.0.0.0"
+  ) {
+    return true;
+  }
+
+  const ipMatch = lower.match(/^(\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3})$/);
+  if (ipMatch) {
+    const parts = [Number(ipMatch[1]), Number(ipMatch[2]), Number(ipMatch[3]), Number(ipMatch[4])];
+    if (parts.some((p) => p < 0 || p > 255)) return true;
+    const [a, b] = parts;
+    if (a === 127) return true;
+    if (a === 10) return true;
+    if (a === 172 && b >= 16 && b <= 31) return true;
+    if (a === 192 && b === 168) return true;
+    if (a === 169 && b === 254) return true;
+    if (a === 0) return true;
+  }
+
+  return false;
+}
 
 export function validateImageUrl(value: unknown, cloudName?: string): URL {
-  if (typeof value !== "string") {
+  if (typeof value !== "string" || !value.trim()) {
     throw new ImageInputError("A valid HTTPS image URL is required");
   }
   let url: URL;
   try {
-    url = new URL(value);
+    url = new URL(value.trim());
   } catch {
     throw new ImageInputError("A valid HTTPS image URL is required");
   }
   if (
-    url.protocol !== "https:" || url.username || url.password || url.port ||
-    !(isOwnedCloudinaryUrl(url, cloudName) || externalImageHosts.has(url.hostname))
+    url.protocol !== "https:" ||
+    url.username ||
+    url.password ||
+    url.port ||
+    isPrivateHost(url.hostname)
   ) {
     throw new ImageInputError("Image URL host or protocol is not allowed");
   }
   return url;
+}
+
+export function isCloudinaryUrl(url: URL): boolean {
+  return (
+    url.hostname === "res.cloudinary.com" ||
+    url.hostname.endsWith(".cloudinary.com")
+  );
 }
 
 export function isOwnedCloudinaryUrl(url: URL, cloudName?: string): boolean {

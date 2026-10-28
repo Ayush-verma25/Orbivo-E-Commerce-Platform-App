@@ -241,7 +241,7 @@ export const updateOrderStatus = async (
     }
 
     if (
-      tracking_number !== undefined &&
+      tracking_number !== undefined && tracking_number !== null &&
       (typeof tracking_number !== "string" || tracking_number.length > 100)
     ) {
       res.status(400).json({
@@ -274,7 +274,7 @@ export const updateOrderStatus = async (
       data: {
         order_status: order_status || existing.order_status,
         tracking_number:
-          tracking_number !== undefined
+          tracking_number !== undefined && tracking_number !== null
             ? tracking_number
             : existing.tracking_number,
         payment_status: payment_status || existing.payment_status,
