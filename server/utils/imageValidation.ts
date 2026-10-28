@@ -1,9 +1,22 @@
 import { fileTypeFromBuffer } from "file-type";
+import { BlockList, isIP } from "node:net";
+
+const globalIpv6 = new BlockList();
+globalIpv6.addSubnet("2000::", 3, "ipv6");
+const reservedIpv6 = new BlockList();
+// Special protocol, documentation and transition ranges are not image origins.
+reservedIpv6.addSubnet("2001::", 23, "ipv6");
+reservedIpv6.addSubnet("2001:db8::", 32, "ipv6");
+reservedIpv6.addSubnet("2002::", 16, "ipv6");
+reservedIpv6.addSubnet("3fff::", 20, "ipv6");
 
 export class ImageInputError extends Error {}
 
 function isPrivateHost(hostname: string): boolean {
-  const lower = hostname.toLowerCase();
+  const lower = hostname.toLowerCase().replace(/^\[|\]$/g, "");
+  if (isIP(lower) === 6) {
+    return !globalIpv6.check(lower, "ipv6") || reservedIpv6.check(lower, "ipv6");
+  }
   if (
     lower === "localhost" ||
     lower.endsWith(".local") ||

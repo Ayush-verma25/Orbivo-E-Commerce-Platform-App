@@ -6,7 +6,7 @@ import toast from "react-hot-toast";
 import { api } from "../../config/api";
 
 export const StoreSetup: React.FC = () => {
-  const { user, store, setStore, loading: authLoading } = useAuth();
+  const { user, store, setStore, refreshMe, loading: authLoading } = useAuth();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const initialSlug = searchParams.get("slug") || "";
@@ -43,7 +43,7 @@ export const StoreSetup: React.FC = () => {
     return <Navigate to="/admin" replace />;
   }
 
-  if (store) {
+  if (store && !loading) {
     return <Navigate to="/merchant" replace />;
   }
 
@@ -111,6 +111,7 @@ export const StoreSetup: React.FC = () => {
 
       if (res.data.success) {
         setStore(res.data.store);
+        await refreshMe();
         toast.success("Store created successfully!");
         navigate("/merchant");
       }

@@ -80,7 +80,7 @@ frontend/
 
 ### Prerequisites
 
-* Node.js 18.x or higher
+* Node.js ^20.19.0 or >=22.12.0
 * npm 9.x or higher (or pnpm / yarn)
 
 ### Installation
@@ -118,9 +118,15 @@ The frontend relies on the following environment variables:
 
 | Variable | Description | Default |
 | :--- | :--- | :--- |
-| `VITE_BASE_URL` | Base URL of the StoreiFly backend API | `http://localhost:3000` |
+| `VITE_BASE_URL` | Base URL of the StoreiFly backend API | `http://localhost:5000` (development only) |
 | `VITE_NEON_AUTH_URL` | (Optional) URL for Neon Auth endpoint | - |
 | `VITE_NEON_FUNCTIONS_URL` | (Optional) Edge compute function URL for public product reads | - |
+
+Local development loads `VITE_BASE_URL` from `.env.development`. For production,
+set `VITE_BASE_URL` to your deployed HTTPS backend URL in the hosting provider's
+build environment before running `npm run build`. Vite embeds this value in the
+bundle, so changing it requires a rebuild. Production builds reject a missing or
+localhost backend URL.
 
 ---
 

@@ -3,7 +3,11 @@ import axios from "axios";
 export const NEON_FUNCTIONS_URL = import.meta.env.VITE_NEON_FUNCTIONS_URL || import.meta.env.VITE_PUBLIC_API_URL;
 
 export const api = axios.create({
-    baseURL: import.meta.env.VITE_BASE_URL || "http://localhost:3000",
+    baseURL:
+        import.meta.env.VITE_BASE_URL ||
+        (import.meta.env.DEV
+            ? "http://localhost:5000"
+            : "https://orbivo-e-commerce-platform-backend.onrender.com"),
     headers: {
         "Content-Type": "application/json",
     },
