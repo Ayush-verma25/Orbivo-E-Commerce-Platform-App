@@ -5,8 +5,8 @@ import {
   getMerchantOrders,
   getOrderReceipt,
   updateOrderStatus,
-} from "../controllers/orderController.js";
-import { optionalAuth, requireRole } from "../middleware/auth.js";
+} from "../controllers/orderController.ts";
+import { optionalAuth, requireRole } from "../middleware/auth.ts";
 
 const orderRouter = Router();
 
