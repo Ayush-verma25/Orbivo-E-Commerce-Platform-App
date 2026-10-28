@@ -1,6 +1,6 @@
 import multer from "multer";
 import type { RequestHandler } from "express";
-import { ImageInputError, validateImageBuffer } from "../utils/imageValidation.ts";
+import { ImageInputError, validateImageBuffer } from "../utils/imageValidation.js";
 
 const multerUpload = multer({
   storage: multer.memoryStorage(),
