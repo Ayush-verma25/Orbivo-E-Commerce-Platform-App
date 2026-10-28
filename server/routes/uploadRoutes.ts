@@ -1,13 +1,13 @@
 import { Router } from "express";
 import { ipKeyGenerator, rateLimit } from "express-rate-limit";
-import { AuthenticatedRequest, requireAuth } from "../middleware/auth.js";
-import { upload, validateUploadedImages } from "../middleware/upload.js";
+import { AuthenticatedRequest, requireAuth } from "../middleware/auth.ts";
+import { upload, validateUploadedImages } from "../middleware/upload.ts";
 import {
   aiOnModel,
   aiTransform,
   uploadMultiple,
   uploadSingle,
-} from "../controllers/uploadController.js";
+} from "../controllers/uploadController.ts";
 
 const uploadRouter = Router();
 
