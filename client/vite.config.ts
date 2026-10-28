@@ -5,7 +5,8 @@ import tailwindcss from "@tailwindcss/vite";
 // https://vite.dev/config/
 export default defineConfig(({ command, mode }) => {
     if (command === "build" && mode !== "development") {
-        const { VITE_BASE_URL } = loadEnv(mode, process.cwd(), "VITE_");
+        const env = loadEnv(mode, process.cwd(), "VITE_");
+        const VITE_BASE_URL = env.VITE_BASE_URL || "https://orbivo-e-commerce-platform-backend.onrender.com";
         let backendUrl: URL;
         try {
             backendUrl = new URL(VITE_BASE_URL);

@@ -1,4 +1,4 @@
-import { Route, Routes } from "react-router-dom";
+import { Route, Routes, Navigate } from "react-router-dom";
 import { Toaster } from "react-hot-toast";
 import { AuthProvider } from "./context/AuthContext";
 import { CartProvider } from "./context/CartContext";
@@ -127,6 +127,8 @@ export default function App() {
                             </ProtectedRoute>
                         }
                     />
+                    {/* Fallback */}
+                    <Route path="*" element={<Navigate to="/" replace />} />
                 </Routes>
             </CartProvider>
         </AuthProvider>

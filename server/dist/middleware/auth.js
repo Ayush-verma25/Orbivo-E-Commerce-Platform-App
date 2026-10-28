@@ -1,4 +1,4 @@
-import { createRemoteJWKSet, jwtVerify, decodeJwt } from "jose";
+import { createRemoteJWKSet, jwtVerify } from "jose";
 import { findNeonUser } from "../services/neonUser.js";
 import { prisma } from "../config/prisma.js";
 const NEON_AUTH_JWKS_URL = process.env.NEON_AUTH_JWKS_URL;
@@ -18,8 +18,8 @@ catch (e) {
     console.warn("Neon Auth JWKS initialization warning:", e);
 }
 /**
- * Verifies an authentication token via Neon Auth JWKS, Neon session table lookup,
- * or decoded JWT payload, resolving the active user and associated store.
+ * Verifies an authentication token via Neon Auth JWKS or Neon session table lookup,
+ * resolving the active user and associated store.
  *
  * @param token - JWT or session token string without the Bearer prefix.
  * @returns The resolved user with a store ID, or null when authentication fails.
@@ -71,22 +71,6 @@ export const verifyAuthToken = async (token) => {
         }
         catch (sessionErr) {
             console.warn("Session table lookup fallback error:", sessionErr?.message || sessionErr);
-        }
-    }
-    // 3. Fallback: If it's a validly structured unexpired JWT, verify user exists in DB
-    if (!userId && cleanToken.split(".").length === 3) {
-        try {
-            const decoded = decodeJwt(cleanToken);
-            if (decoded?.sub && (!decoded.exp || decoded.exp * 1000 > Date.now())) {
-                const dbUser = await findNeonUser({ id: String(decoded.sub) });
-                if (dbUser) {
-                    userId = String(decoded.sub);
-                    payload = decoded;
-                }
-            }
-        }
-        catch {
-            // Not a valid JWT structure
         }
     }
     if (!userId) {

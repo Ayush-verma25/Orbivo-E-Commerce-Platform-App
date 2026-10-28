@@ -13,9 +13,16 @@ const parseId = (value) => {
     const id = Number(value);
     return Number.isInteger(id) && id > 0 && id <= 2147483647 ? id : null;
 };
-const getStore = (merchantId, storeId) => storeId
-    ? prisma.stores.findFirst({ where: { id: storeId, merchant_id: merchantId } })
-    : prisma.stores.findFirst({ where: { merchant_id: merchantId } });
+const getStore = async (merchantId, storeId) => {
+    if (storeId) {
+        return prisma.stores.findFirst({ where: { id: storeId, merchant_id: merchantId } });
+    }
+    const stores = await prisma.stores.findMany({
+        where: { merchant_id: merchantId },
+        take: 2,
+    });
+    return stores.length === 1 ? stores[0] : null;
+};
 export const getCategories = async (req, res) => {
     try {
         const { storeId, storeSlug } = req.query;
