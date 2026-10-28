@@ -1,7 +1,7 @@
 import "dotenv/config";
 import express, { NextFunction, Request, Response } from "express";
 import cors from "cors";
-import categoryRoutes from "./routes/categoryRoutes.js";
+import categoryRouter from "./routes/categoryRoutes.js";
 import uploadRouter from "./routes/uploadRoutes.js";
 import storeRouter from "./routes/storeRoutes.js";
 import productRouter from "./routes/productRoutes.js";
