@@ -3,8 +3,8 @@ import {
   createCategories,
   deleteCategories,
   getCategories,
-} from "../controllers/categoryController.js";
-import { requireAuth, requireRole } from "../middleware/auth.js";
+} from "../controllers/categoryController.ts";
+import { requireAuth, requireRole } from "../middleware/auth.ts";
 
 const categoryRouter = Router();
 
