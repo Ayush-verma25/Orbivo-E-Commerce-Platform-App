@@ -1,10 +1,10 @@
 import { Response } from "express";
-import { AuthenticatedRequest } from "../middleware/auth.js";
-import { prisma } from "../config/prisma.js";
+import { AuthenticatedRequest } from "../middleware/auth.ts";
+import { prisma } from "../config/prisma.ts";
 import {
   countNeonMerchants,
   findNeonUsersByIds,
-} from "../services/neonUser.js";
+} from "../services/neonUser.ts";
 
 const getMerchantStore = async (merchantId: string) =>
   prisma.stores.findFirst({
