@@ -25,6 +25,7 @@
     "file-type": "^22.2.0",
     "jose": "^6.2.13",
     "multer": "^2.5.0",
+    "tsx": "^4.23.15",
     "pg": "^8.23.1"
   },
   "devDependencies": {
