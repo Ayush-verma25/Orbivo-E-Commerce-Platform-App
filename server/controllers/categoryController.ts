@@ -13,12 +13,15 @@ const generateSlug = (text: string) =>
     
 const parseId = (value: unknown): number | null => {
   if (typeof value !== "string" && typeof value !== "number") return null;
+  if (value === "undefined" || value === "null" || value === "") return null;
   const id = Number(value);
   return Number.isInteger(id) && id > 0 && id <= 2_147_483_647 ? id : null;
 };
 
-const getStore = (merchantId: string, storeId: number) =>
-  prisma.stores.findFirst({ where: { id: storeId, merchant_id: merchantId } });
+const getStore = (merchantId: string, storeId?: number | null) =>
+  storeId
+    ? prisma.stores.findFirst({ where: { id: storeId, merchant_id: merchantId } })
+    : prisma.stores.findFirst({ where: { merchant_id: merchantId } });
 
 export const getCategories = async (
   req: Request,
@@ -28,7 +31,7 @@ export const getCategories = async (
     const { storeId, storeSlug } = req.query;
     let targatStoreId = parseId(storeId);
 
-    if (storeId !== undefined && targatStoreId === null) {
+    if (storeId !== undefined && storeId !== "undefined" && storeId !== "null" && storeId !== "" && targatStoreId === null) {
       res.status(400).json({ success: false, message: "Invalid store ID" });
       return;
     }
@@ -86,7 +89,7 @@ export const createCategories = async (
     const { name, storeId: requestedStoreId } = req.body ?? {};
     const storeId = parseId(requestedStoreId);
 
-    if (storeId === null) {
+    if (requestedStoreId !== undefined && storeId === null) {
       res.status(400).json({ success: false, message: "Invalid store ID" });
       return;
     }
@@ -128,7 +131,7 @@ export const deleteCategories = async (
     const storeId = parseId(req.query.storeId);
     const categoryId = parseId(req.params.id);
 
-    if (storeId === null || categoryId === null) {
+    if (categoryId === null || (req.query.storeId !== undefined && storeId === null)) {
       res
         .status(400)
         .json({ success: false, message: "Invalid category or store ID" });

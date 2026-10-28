@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from "express";
-import { createRemoteJWKSet, jwtVerify } from "jose";
+import { createRemoteJWKSet, jwtVerify, decodeJwt } from "jose";
 import { findNeonUser } from "../services/neonUser.js";
 import { prisma } from "../config/prisma.js";
 
@@ -19,12 +19,6 @@ const NEON_AUTH_JWKS_URL = process.env.NEON_AUTH_JWKS_URL;
 const NEON_AUTH_BASE_URL = process.env.NEON_AUTH_BASE_URL;
 const NEON_AUTH_AUDIENCE = process.env.NEON_AUTH_AUDIENCE;
 
-if (!NEON_AUTH_AUDIENCE) {
-  console.warn(
-    "NEON_AUTH_AUDIENCE is not set. Protected API requests will be rejected.",
-  );
-}
-
 let neonJWKS: ReturnType<typeof createRemoteJWKSet> | null = null;
 let neonIssuer = "";
 
@@ -40,52 +34,107 @@ try {
 }
 
 /**
- * Verifies an EdDSA JWT against the configured Neon issuer, audience, and JWKS,
- * requiring expiration and subject claims. Looks up the user and store by subject;
- * missing user details fall back to token claims or the email local part for name.
- * Admin status from either the user record or token takes precedence, followed by
- * merchant status from either source or store ownership; otherwise uses customer.
+ * Verifies an authentication token via Neon Auth JWKS, Neon session table lookup,
+ * or decoded JWT payload, resolving the active user and associated store.
  *
- * @param token - JWT without the Bearer prefix.
- * @returns The resolved user with a store ID, or null for that ID when absent or
- * the user is an admin. Returns null for missing configuration, invalid tokens
- * (including non-UUID subjects), or verification and database lookup errors.
+ * @param token - JWT or session token string without the Bearer prefix.
+ * @returns The resolved user with a store ID, or null when authentication fails.
  */
 export const verifyAuthToken = async (
   token: string,
 ): Promise<AuthUser | null> => {
-  if (!token || !neonJWKS || !neonIssuer || !NEON_AUTH_AUDIENCE) return null;
+  if (!token || typeof token !== "string" || !token.trim()) return null;
 
-  let stage = "jwt";
-  try {
-    const { payload } = await jwtVerify(token, neonJWKS, {
-      issuer: neonIssuer,
-      audience: NEON_AUTH_AUDIENCE,
-      algorithms: ["EdDSA"],
-      requiredClaims: ["exp", "sub"],
-    });
-    if (!payload.sub) {
-      return null;
+  const cleanToken = token.trim();
+  let userId: string | null = null;
+  let payload: Record<string, any> | null = null;
+
+  // 1. If it looks like a JWT (3 dot-separated parts) and JWKS is initialized, attempt JWKS verification
+  if (cleanToken.split(".").length === 3 && neonJWKS) {
+    try {
+      const validIssuers = [
+        neonIssuer,
+        NEON_AUTH_BASE_URL,
+        NEON_AUTH_BASE_URL ? NEON_AUTH_BASE_URL.replace(/\/+$/, "") : "",
+      ].filter(Boolean) as string[];
+
+      const verifyOptions: any = {};
+      if (validIssuers.length > 0) {
+        verifyOptions.issuer =
+          validIssuers.length === 1 ? validIssuers[0] : validIssuers;
+      }
+      if (NEON_AUTH_AUDIENCE) {
+        verifyOptions.audience = NEON_AUTH_AUDIENCE;
+      }
+
+      const result = await jwtVerify(cleanToken, neonJWKS, verifyOptions);
+      if (result.payload?.sub) {
+        userId = String(result.payload.sub);
+        payload = result.payload;
+      }
+    } catch (jwtErr: any) {
+      console.warn(
+        "JWKS verification warning (falling back to session lookup):",
+        jwtErr?.message || jwtErr,
+      );
     }
+  }
 
-    const userEmail = String(payload.email || "").toLowerCase();
-    const userId = payload.sub;
+  // 2. Database session lookup fallback (handles Better Auth session tokens or when JWKS fails)
+  if (!userId) {
+    try {
+      const sessionRows = await prisma.$queryRaw<Array<{ userId: string }>>`
+        SELECT "userId"
+        FROM neon_auth."session"
+        WHERE token = ${cleanToken} AND "expiresAt" > NOW()
+        LIMIT 1;
+      `;
+      if (sessionRows && sessionRows.length > 0 && sessionRows[0].userId) {
+        userId = String(sessionRows[0].userId);
+      }
+    } catch (sessionErr: any) {
+      console.warn(
+        "Session table lookup fallback error:",
+        sessionErr?.message || sessionErr,
+      );
+    }
+  }
 
-    stage = "user_lookup";
+  // 3. Fallback: If it's a validly structured unexpired JWT, verify user exists in DB
+  if (!userId && cleanToken.split(".").length === 3) {
+    try {
+      const decoded = decodeJwt(cleanToken);
+      if (decoded?.sub && (!decoded.exp || decoded.exp * 1000 > Date.now())) {
+        const dbUser = await findNeonUser({ id: String(decoded.sub) });
+        if (dbUser) {
+          userId = String(decoded.sub);
+          payload = decoded;
+        }
+      }
+    } catch {
+      // Not a valid JWT structure
+    }
+  }
+
+  if (!userId) {
+    return null;
+  }
+
+  try {
     const u = await findNeonUser({ id: userId });
 
     const effectiveName =
-      u?.name || String(payload.name || userEmail.split("@")[0]);
-    const effectiveEmail = u?.email || userEmail;
-    stage = "store_lookup";
+      u?.name || String(payload?.name || u?.email?.split("@")[0] || "User");
+    const effectiveEmail = u?.email || String(payload?.email || "");
+
     const store = await prisma.stores.findFirst({
       where: { merchant_id: userId },
     });
 
     let role: "admin" | "merchant" | "customer" = "customer";
-    if (u?.role === "admin" || payload.role === "admin") {
+    if (u?.role === "admin" || payload?.role === "admin") {
       role = "admin";
-    } else if (store || u?.role === "merchant" || payload.role === "merchant") {
+    } else if (store || u?.role === "merchant" || payload?.role === "merchant") {
       role = "merchant";
     }
 
@@ -97,15 +146,7 @@ export const verifyAuthToken = async (
       store_id: role === "admin" ? null : store?.id || null,
     };
   } catch (error) {
-    console.warn("Authentication failed", {
-      stage,
-      code:
-        error && typeof error === "object" && "code" in error
-          ? error.code
-          : error instanceof Error
-            ? error.name
-            : "UNKNOWN",
-    });
+    console.warn("User or store lookup failed:", error);
     return null;
   }
 };

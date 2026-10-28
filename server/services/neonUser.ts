@@ -18,36 +18,47 @@ const UUID_PATTERN =
  * Email is trimmed and matched case-insensitively.
  * @returns The first matching record, or null when no record matches or both
  * filter values are absent or empty.
- * @throws {TypeError} If a nonempty ID is not a UUID in hyphenated hexadecimal form.
- * @throws Propagates database query errors.
  */
 export const findNeonUser = async (filter: {
   id?: string;
   email?: string;
 }): Promise<NeonUserRecord | null> => {
   if (filter.id) {
-    if (!UUID_PATTERN.test(filter.id)) {
-      throw new TypeError("Invalid Neon user UUID");
-    }
-    const rows = await prisma.$queryRaw<NeonUserRecord[]>`
+    try {
+      const isUuid = UUID_PATTERN.test(filter.id);
+      const rows = isUuid
+        ? await prisma.$queryRaw<NeonUserRecord[]>`
             SELECT id, name, email, role, "createdAt" as "createdAt"
             FROM neon_auth."user"
             WHERE id = ${filter.id}::uuid
             LIMIT 1;
-            `;
+          `
+        : await prisma.$queryRaw<NeonUserRecord[]>`
+            SELECT id, name, email, role, "createdAt" as "createdAt"
+            FROM neon_auth."user"
+            WHERE id::text = ${filter.id}::text
+            LIMIT 1;
+          `;
 
-    return rows[0] || null;
+      return rows[0] || null;
+    } catch {
+      return null;
+    }
   }
 
   if (filter.email) {
-    const rows = await prisma.$queryRaw<NeonUserRecord[]>`
+    try {
+      const rows = await prisma.$queryRaw<NeonUserRecord[]>`
             SELECT id, name, email, role, "createdAt" as "createdAt"
             FROM neon_auth."user"
             WHERE LOWER(email) = ${filter.email.trim().toLowerCase()}
             LIMIT 1;
             `;
 
-    return rows[0] || null;
+      return rows[0] || null;
+    } catch {
+      return null;
+    }
   }
   return null;
 };
@@ -58,11 +69,20 @@ export const updateNeonUserRole = async (
   client: Pick<typeof prisma, "$executeRaw"> = prisma,
 ): Promise<void> => {
   try {
-    await client.$executeRaw`
-    UPDATE neon_auth."user"
-    SET role = ${role}, "updatedAt" = NOW()
-    WHERE id = ${userId}::uuid AND (role IS NULL OR role != 'admin')
-    `;
+    const isUuid = UUID_PATTERN.test(userId);
+    if (isUuid) {
+      await client.$executeRaw`
+      UPDATE neon_auth."user"
+      SET role = ${role}, "updatedAt" = NOW()
+      WHERE id = ${userId}::uuid AND (role IS NULL OR role != 'admin')
+      `;
+    } else {
+      await client.$executeRaw`
+      UPDATE neon_auth."user"
+      SET role = ${role}, "updatedAt" = NOW()
+      WHERE id::text = ${userId}::text AND (role IS NULL OR role != 'admin')
+      `;
+    }
   } catch (e) {
     console.error(e);
     throw e;
