@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
-import { AuthenticatedRequest } from "../middleware/auth.ts";
-import { prisma } from "../config/prisma.ts";
+import { AuthenticatedRequest } from "../middleware/auth.js";
+import { prisma } from "../config/prisma.js";
 
 const generateSlug = (text: string) =>
   text
