@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import { randomUUID } from "node:crypto";
-import cloudinary from "../config/cloudinary.js";
+import cloudinary from "../config/cloudinary.ts";
 import {
   ImageInputError,
   isOwnedCloudinaryUrl,
@@ -8,7 +8,7 @@ import {
   normalizeColor,
   validateImageBuffer,
   validateImageUrl,
-} from "../utils/imageValidation.js";
+} from "../utils/imageValidation.ts";
 
 export const optimizeDeliveryUrl = (url: string): string => {
   if (!url || typeof url !== "string" || url.includes(".svg")) return url;
