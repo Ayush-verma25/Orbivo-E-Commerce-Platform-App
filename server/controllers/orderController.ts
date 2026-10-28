@@ -1,8 +1,8 @@
 import { randomBytes } from "node:crypto";
 import { Response } from "express";
-import { AuthenticatedRequest } from "../middleware/auth.js";
-import { prisma } from "../config/prisma.js";
-import type { Prisma } from "../generated/prisma/client.js";
+import { AuthenticatedRequest } from "../middleware/auth.ts";
+import { prisma } from "../config/prisma.ts";
+import type { Prisma } from "../generated/prisma/client.ts";
 
 const generateOrderNumber = () =>
   `ORD-${Date.now().toString(36).toUpperCase()}-${randomBytes(16).toString("hex").toUpperCase()}`;
