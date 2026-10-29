@@ -1,163 +1,220 @@
 <div align="center">
 
-# 🛍️ Orbivo — Multi-Tenant E-Commerce Platform
+<img src="client/public/logo.svg" alt="Orbivo logo" width="280" />
 
-**Launch, brand and manage online stores from a single platform.**
-Merchants get their own storefront and dashboard, customers get a fast checkout, and platform admins keep everything moderated.
+# Orbivo E-Commerce Platform
 
-![React](https://img.shields.io/badge/React-19-61DAFB?logo=react&logoColor=white)
-![TypeScript](https://img.shields.io/badge/TypeScript-5%2B-3178C6?logo=typescript&logoColor=white)
-![Vite](https://img.shields.io/badge/Vite-8-646CFF?logo=vite&logoColor=white)
-![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-4-06B6D4?logo=tailwindcss&logoColor=white)
-![Node.js](https://img.shields.io/badge/Node.js-20.19%2B-339933?logo=nodedotjs&logoColor=white)
-![Express](https://img.shields.io/badge/Express-5-000000?logo=express&logoColor=white)
-![Prisma](https://img.shields.io/badge/Prisma-7-2D3748?logo=prisma&logoColor=white)
-![PostgreSQL](https://img.shields.io/badge/PostgreSQL-Neon-4169E1?logo=postgresql&logoColor=white)
-![Cloudinary](https://img.shields.io/badge/Cloudinary-Media_%26_AI-3448C5?logo=cloudinary&logoColor=white)
-![License](https://img.shields.io/badge/License-MIT-green)
+**A multi-tenant, full-stack e-commerce platform where anyone can launch their own branded online store in minutes.**
 
-[Live Demo](#) · [Report a Bug](https://github.com/Ayush-verma25/Orbivo-E-Commerce-Platform-App/issues) · [Request a Feature](https://github.com/Ayush-verma25/Orbivo-E-Commerce-Platform-App/issues)
+Merchants get an isolated storefront, a management console, and AI-powered product photography.
+Platform admins get oversight across every store. Customers get a fast, themed shopping experience.
+
+[![React](https://img.shields.io/badge/React-19-61DAFB?logo=react&logoColor=white)](https://react.dev)
+[![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?logo=typescript&logoColor=white)](https://www.typescriptlang.org)
+[![Node.js](https://img.shields.io/badge/Node.js-20.19%2B-339933?logo=nodedotjs&logoColor=white)](https://nodejs.org)
+[![Express](https://img.shields.io/badge/Express-5-000000?logo=express&logoColor=white)](https://expressjs.com)
+[![PostgreSQL](https://img.shields.io/badge/PostgreSQL-Neon-4169E1?logo=postgresql&logoColor=white)](https://neon.tech)
+[![Prisma](https://img.shields.io/badge/Prisma-7-2D3748?logo=prisma&logoColor=white)](https://www.prisma.io)
+[![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-4-06B6D4?logo=tailwindcss&logoColor=white)](https://tailwindcss.com)
+[![Vite](https://img.shields.io/badge/Vite-8-646CFF?logo=vite&logoColor=white)](https://vite.dev)
+[![Cloudinary](https://img.shields.io/badge/Cloudinary-3448C5?logo=cloudinary&logoColor=white)](https://cloudinary.com)
+[![Vercel](https://img.shields.io/badge/Deployed_on-Vercel-000000?logo=vercel&logoColor=white)](https://vercel.com)
+[![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](client/LICENSE.md)
 
 </div>
 
----
-
-## 📑 Table of Contents
-
-- [About the Project](#-about-the-project)
-- [Key Features](#-key-features)
-- [Tech Stack](#-tech-stack)
-- [System Architecture](#-system-architecture)
-- [Database Design](#-database-design)
-- [Roles & Permissions](#-roles--permissions)
-- [How Checkout Works](#-how-checkout-works)
-- [AI-Powered Product Imagery](#-ai-powered-product-imagery)
-- [Security Highlights](#-security-highlights)
-- [Project Structure](#-project-structure)
-- [Getting Started](#-getting-started)
-- [Environment Variables](#-environment-variables)
-- [API Reference](#-api-reference)
-- [Deployment](#-deployment)
-- [Roadmap](#-roadmap)
-- [Contributing](#-contributing)
-- [License & Acknowledgements](#-license--acknowledgements)
-- [Author](#-author)
-
----
-
-## 📖 About the Project
-
-**Orbivo** is a full-stack, **multi-tenant e-commerce platform** built on the PERN stack (PostgreSQL, Express, React, Node.js) with TypeScript end to end. Think of it as a lightweight "Shopify-style" system: any merchant can register, create a store under its own URL (`/store/<slug>`), customise its look, publish products, and start taking orders — while a platform administrator oversees every store and merchant.
-
-The project is split into three experiences that share a single backend:
-
-| Experience | Who it's for | What it does |
-| --- | --- | --- |
-| 🛒 **Storefront** | Shoppers | Browse a store, view products, build a cart, check out as guest or signed-in customer, track orders |
-| 🏪 **Merchant Dashboard** | Store owners | Onboard a store, manage products / categories / orders, view analytics, brand the storefront |
-| 🛡️ **Admin Portal** | Platform operators | See platform-wide metrics, review and suspend/activate stores, browse merchants |
-
 <!--
-📸 SCREENSHOTS — add your own images to a /docs folder and uncomment:
+  TODO (optional): add a live demo link and screenshots, then uncomment.
 
-| Landing Page | Storefront | Merchant Dashboard |
-| --- | --- | --- |
-| ![Landing](docs/landing.png) | ![Storefront](docs/storefront.png) | ![Dashboard](docs/dashboard.png) |
+  [**Live Demo**](https://your-deployment-url.vercel.app) · [Report a Bug](https://github.com/Ayush-verma25/Orbivo-E-Commerce-Platform-App/issues) · [Request a Feature](https://github.com/Ayush-verma25/Orbivo-E-Commerce-Platform-App/issues)
 -->
 
 ---
 
-## ✨ Key Features
+## Table of Contents
 
-### 🛒 Customer Storefront
-- **Tenant-isolated stores** served at `/store/:storeSlug`, each with its own catalog, branding and shipping rules
-- **Themeable storefronts** — 4 hero layouts (`hero1`–`hero4`) and 10 accent-colour presets chosen by the merchant
-- **Catalog browsing** with search (URL-synced), category filtering and sorting (price, name, newest)
-- **Product detail pages** with image gallery, variant selection (e.g. Size / Colour), stock awareness, sale-price comparison and related products
-- **Persistent cart per store** (saved in `localStorage`), quantity capped to available stock, free-shipping progress bar
-- **Guest or authenticated checkout**, instant order confirmation page, and public **receipt lookup by order number**
-- **Customer accounts** with order history per store
-
-### 🏪 Merchant Dashboard
-- **Store setup wizard** — name, URL slug, logo, banner, currency, shipping fee and free-shipping threshold, hero style, accent colour
-- **Product management** — full CRUD, SKU, price / compare-at price, stock, status, multi-image upload (up to 5 per request) and a **variant builder**
-- **Category management** per store
-- **Order management** — status workflow (`placed → confirmed → processing → shipped → delivered / cancelled`), payment status, tracking numbers, order detail modal
-- **Analytics cards** — revenue, total orders, average order value, pending / delivered orders, product count, low-stock alerts, recent orders
-- **AI image studio** — recolour products, remove backgrounds, or generate on-model photos (see [below](#-ai-powered-product-imagery))
-
-### 🛡️ Platform Admin
-- **Platform analytics** — total / active / suspended stores, merchants, orders, platform revenue and **top 5 stores by revenue**
-- **Store moderation** — activate or suspend any store (suspended stores are blocked from public pages and checkout)
-- **Merchant directory** with linked store information
+- [Overview](#overview)
+- [Features](#features)
+- [Tech Stack](#tech-stack)
+- [System Architecture](#system-architecture)
+- [Engineering Highlights](#engineering-highlights)
+- [Data Model](#data-model)
+- [API Reference](#api-reference)
+- [Frontend Routes](#frontend-routes)
+- [Project Structure](#project-structure)
+- [Getting Started](#getting-started)
+- [Environment Variables](#environment-variables)
+- [Available Scripts](#available-scripts)
+- [Deployment](#deployment)
+- [Known Limitations and Roadmap](#known-limitations-and-roadmap)
+- [Acknowledgements](#acknowledgements)
+- [License](#license)
+- [Author](#author)
 
 ---
 
-## 🧰 Tech Stack
+## Overview
 
-### Frontend (`/client`)
-| Technology | Purpose |
-| --- | --- |
-| **React 19** + **TypeScript** | UI and type safety |
-| **Vite 8** | Dev server and build tooling |
-| **Tailwind CSS v4** | Styling (via `@tailwindcss/vite`) |
-| **React Router 7** | Client-side routing and protected routes |
-| **Axios** | API client with request interceptor |
-| **Neon Auth client** (`@neondatabase/neon-js`) | Sign-up, sign-in and session handling |
-| **react-hot-toast**, **lucide-react** | Notifications and icons |
-| **oxlint** | Linting |
+**Orbivo** is a multi-tenant e-commerce engine built on the **PERN stack** (PostgreSQL, Express, React, Node.js) and written end to end in **TypeScript**.
 
-### Backend (`/server`)
-| Technology | Purpose |
-| --- | --- |
-| **Node.js** + **Express 5** (ESM, TypeScript) | REST API |
-| **PostgreSQL** on **Neon** | Primary database |
-| **Prisma 7** + `@prisma/adapter-pg` | Type-safe ORM, migrations |
-| **jose** | JWT verification against Neon Auth's JWKS |
-| **Cloudinary** | Image hosting, delivery optimisation and generative AI transforms |
-| **Multer** + **file-type** | In-memory uploads with magic-byte validation |
-| **express-rate-limit** | Throttling for the AI endpoints |
-| **Neon Functions** (`@neondatabase/serverless`) | Lightweight, serverless public read API |
-| **tsx** + **nodemon** | Development runtime |
+A single deployment hosts many independent stores. When a merchant registers, they receive their own storefront at `/store/<their-slug>` with a separate product catalog, categories, orders, shipping rules, and visual theme, while a platform administrator can monitor and moderate every store from one console.
+
+The platform serves three distinct audiences:
+
+| Role | What they do |
+| :--- | :--- |
+| **Customer** | Browses a store, builds a cart, checks out as a guest or a signed-in user, and tracks orders. |
+| **Merchant** | Creates and brands a store, manages products, variants, inventory and categories, fulfils orders, and reads sales analytics. |
+| **Platform Admin** | Sees platform-wide metrics, lists all merchants and stores, and can suspend or reactivate any store. |
 
 ---
 
-## 🏗️ System Architecture
+## Features
+
+### Customer Storefront
+
+- **Tenant-isolated storefronts** at `/store/:storeSlug`, each with its own catalog and branding.
+- **Per-store theming**: four hero layouts (`hero1` to `hero4`) and a 10-colour accent palette, applied at runtime through CSS variables with an automatic light or dark contrast text colour.
+- **Catalog browsing** with search and sorting (price low to high, price high to low, name A to Z, name Z to A), with search and sort state kept in the URL.
+- **Product detail pages** with an image gallery, variant selection (for example Size or Color), stock awareness, compare-at pricing, and related products.
+- **Persistent per-store cart** saved in `localStorage`, with quantity caps tied to available stock and a **free-shipping progress bar**.
+- **Guest or authenticated checkout** using Cash on Delivery.
+- **Order confirmation and receipts** looked up by an unguessable order number, plus a signed-in **order history** page.
+
+### Merchant Console
+
+- **Onboarding wizard** to set store name, URL slug, description, logo, banner, currency, shipping fee, and free-shipping threshold.
+- **Product management** with full CRUD, SKU, stock, compare-at price, draft or active status, multi-image upload, and a **variant builder** for option groups.
+- **Category management** scoped to the merchant's own store.
+- **Order management** with a fulfilment workflow, tracking numbers, and payment status updates.
+- **Dashboard analytics**: revenue, order count, average order value, pending and delivered orders, product count, low-stock alerts (5 units or fewer), and the five most recent orders.
+- **Branding settings** to change hero style, accent colour, shipping rules, and store identity at any time.
+
+### AI-Powered Product Photography
+
+Built on Cloudinary's generative AI, directly inside the product editor:
+
+- **Generative Recolor**: describe an object (for example "jacket") and a target colour to produce a colour variant of a product photo, with an option to add that colour to the product's variants automatically.
+- **Background Removal**: produce clean cut-out product shots in one click.
+- **On-Model Photography (virtual try-on)**: combine a garment photo with a model photo to generate a photorealistic on-model image, with controls for garment type, pose, and background.
+
+### Platform Administration
+
+- **Overview metrics**: total, active, and suspended stores, merchant count, total orders, total revenue, and a **top-5 stores by revenue** leaderboard.
+- **Store moderation**: activate or suspend any store. Suspended stores are blocked from the public API and from accepting new orders.
+- **Merchant directory**: every registered merchant and the store linked to them.
+
+---
+
+## Tech Stack
+
+| Layer | Technologies |
+| :--- | :--- |
+| **Frontend** | React 19, TypeScript, Vite 8, React Router 7, Tailwind CSS 4, Axios, Lucide React, React Hot Toast, Oxlint |
+| **Backend** | Node.js, Express 5, TypeScript (run with `tsx`), Multer, `express-rate-limit`, `jose`, `file-type` |
+| **Database** | PostgreSQL on [Neon](https://neon.tech), accessed through Prisma 7 with the `@prisma/adapter-pg` driver adapter |
+| **Authentication** | Neon Auth (email and password) with JWT verification against a remote JWKS, plus a session-table fallback |
+| **Serverless** | A Neon Function (`@neondatabase/serverless`) serving public, read-only storefront data |
+| **Media and AI** | Cloudinary (storage, delivery optimisation, generative recolor, background removal, image-to-image generation) |
+| **Hosting** | Vercel (frontend SPA and Express API) and Neon (database, auth, function) |
+
+---
+
+## System Architecture
+
+The backend is deliberately split in two. Authenticated and write operations go through the **Express API**, while high-traffic **public reads** are served by a lightweight **Neon Function** that talks to the database directly. The frontend's Axios interceptor routes each request to the right service automatically.
 
 ```mermaid
 flowchart LR
-    subgraph Client["React SPA (Vite)"]
-        SF[Storefront]
-        MD[Merchant Dashboard]
-        AD[Admin Portal]
+    subgraph Browser["Browser"]
+        SPA["React 19 SPA<br/>Storefront / Merchant / Admin"]
     end
 
-    NA[(Neon Auth<br/>users & sessions)]
-    NF[Neon Function<br/>public read API]
-    API[Express 5 API<br/>auth · RBAC · business logic]
-    DB[(PostgreSQL<br/>Neon)]
-    CDN[Cloudinary<br/>storage · CDN · AI]
+    NAuth["Neon Auth<br/>sign-up, sign-in, sessions"]
 
-    Client -- "sign-up / sign-in" --> NA
-    Client -- "public GET: stores, products" --> NF
-    Client -- "Bearer token<br/>writes & dashboards" --> API
-    NF --> DB
-    API -- "Prisma" --> DB
-    API -- "verify JWT (JWKS)<br/>or session lookup" --> NA
-    API -- "upload & transform" --> CDN
+    subgraph Edge["Neon Function (public, read-only)"]
+        PF["GET /stores/slug/:slug<br/>GET /stores/public/featured<br/>GET /products, /products/:id"]
+    end
+
+    subgraph API["Express 5 API"]
+        MW["Auth middleware<br/>JWKS verify + role checks"]
+        CT["Controllers<br/>stores, products, categories,<br/>orders, analytics, uploads"]
+    end
+
+    DB[("Neon PostgreSQL<br/>Prisma 7")]
+    CL["Cloudinary<br/>storage + generative AI"]
+
+    SPA -- "credentials" --> NAuth
+    SPA -- "public GET" --> PF
+    SPA -- "Bearer token" --> MW
+    MW --> CT
+    MW -. "verify token / read user" .-> DB
+    PF --> DB
+    CT --> DB
+    CT --> CL
 ```
 
-**Design decisions worth noting**
+### How request routing works
 
-- **Split read/write paths.** Public, read-only storefront traffic (featured stores, store by slug, products) is routed by the Axios interceptor to a **Neon Function** when `VITE_NEON_FUNCTIONS_URL` is set. Everything that mutates data or needs authorisation goes through the Express API.
-- **Managed identity.** Users live in Neon Auth's `neon_auth` schema. The API verifies tokens via JWKS (issuer/audience checked) and falls back to a session-table lookup, then derives the user's role and store from the database.
-- **Multi-tenancy by `store_id`.** Every product, category and order belongs to a store; merchant endpoints always resolve the caller's store from their authenticated user ID before touching data.
+`client/src/config/api.ts` creates one Axios instance. When `VITE_NEON_FUNCTIONS_URL` is set, any `GET` to `/api/products*`, `/api/stores/slug/*`, or `/api/stores/public/featured` is redirected to the Neon Function. Everything else, including every authenticated call, goes to the Express API with an injected `Authorization: Bearer <token>` header.
+
+> **Important:** the store-by-slug, featured-stores, and product-by-id endpoints are implemented **only** in the Neon Function, not in Express. The Neon Function is therefore required for storefront pages to load. See [Getting Started](#getting-started).
+
+### Authentication and authorization flow
+
+1. The user signs up or signs in through the **Neon Auth** client in the browser.
+2. The session token is stored and attached to API requests as a Bearer token.
+3. The Express middleware verifies the token against Neon Auth's **JWKS** endpoint (issuer and optional audience checked) using `jose`. If that fails, it falls back to a lookup in the `neon_auth.session` table.
+4. The resolved user's **role** is derived: `admin` from the Neon user record, `merchant` if the user owns a store or carries the merchant role, otherwise `customer`.
+5. `requireRole([...])` guards each route. Merchants are always resolved to their own store from the **token**, never from a client-supplied store ID.
+
+### Role-based access
+
+| Capability | Public | Customer | Merchant | Admin |
+| :--- | :---: | :---: | :---: | :---: |
+| Browse stores, products, categories | ✅ | ✅ | ✅ | ✅ |
+| Place an order (guest or signed in) | ✅ | ✅ | ✅ | |
+| View own order history | | ✅ | ✅ | |
+| Create and configure own store | | ✅ (becomes merchant) | ✅ | ❌ |
+| Manage products, categories, orders | | | ✅ | |
+| Upload images and use AI tools | | ✅ | ✅ | ✅ |
+| Merchant analytics | | | ✅ | |
+| Platform analytics, suspend stores, list merchants | | | | ✅ |
 
 ---
 
-## 🗄️ Database Design
+## Engineering Highlights
 
-Managed with Prisma (`server/prisma/schema.prisma`). User accounts are held in Neon Auth's `neon_auth` schema and referenced by UUID.
+These are the parts of the codebase that go beyond basic CRUD.
+
+**Safe, race-free checkout.** Order creation runs inside a single Prisma transaction. For every cart line the server loads the product scoped to the target store, then decrements stock with a conditional update (`stock >= quantity`). If any line cannot be fulfilled, the whole transaction rolls back, so inventory can never go negative and concurrent buyers cannot oversell a product.
+
+**Server-authoritative pricing.** The client only sends product IDs and quantities. Prices, product names, shipping cost, and totals are all recomputed on the server from database values, so a tampered cart cannot change what a customer pays. Each order also stores an immutable snapshot of the purchased items.
+
+**Tenant isolation by construction.** Every merchant query resolves the store from the authenticated user (`stores.merchant_id`) and then constrains reads and writes by `store_id`. Category assignment on a product is verified to belong to the same store, so one merchant cannot touch another's data.
+
+**Hardened image pipeline.** Uploads are validated by content, not by file extension:
+- Files are held in memory with a 10 MB limit and a 5-file cap per batch request.
+- Real file type is detected from magic bytes (`file-type`). Only JPEG, PNG, GIF, WebP, AVIF, and SVG are accepted.
+- SVGs are inspected and rejected if they contain scripts, inline event handlers, `javascript:` URLs, `foreignObject`, `iframe`/`embed`/`object`, or XML entity declarations (XXE).
+- Remote image URLs used by the AI tools must be **HTTPS**, may not include credentials or ports, and are checked against private, loopback, link-local, and reserved IPv4 and IPv6 ranges to prevent **SSRF**.
+- AI prompts are restricted to a safe character set and colours are normalised to a validated hex or named colour before being placed into a Cloudinary transformation URL.
+
+**Cost and abuse control.** The AI endpoints are rate limited to 10 requests per minute, keyed by user ID (falling back to IP).
+
+**Unguessable order numbers.** Order numbers combine a base-36 timestamp with 16 cryptographically random bytes, which makes the public receipt endpoint safe to expose without authentication.
+
+**Runtime theming without a rebuild.** A store's accent colour is converted into a set of CSS custom properties (hover, tinted backgrounds, borders, focus ring, and a YIQ-based contrast colour), so each storefront is themed instantly from a single hex value.
+
+**Production configuration guard.** The Vite config fails the production build if `VITE_BASE_URL` is missing, is not HTTPS, or points at localhost, preventing a broken deploy that silently calls a local API.
+
+**Edge-friendly public reads.** The public Neon Function only exposes `GET`, `HEAD`, and `OPTIONS`, returns only active products from active stores, and answers `403` for suspended stores.
+
+---
+
+## Data Model
+
+Four core tables are managed by Prisma. User identities live in Neon Auth's own `neon_auth` schema and are referenced by UUID (`merchant_id`, `customer_id`).
 
 ```mermaid
 erDiagram
@@ -169,21 +226,23 @@ erDiagram
     STORES {
         int id PK
         uuid merchant_id "Neon Auth user"
-        string name
         string slug UK
+        string name
         string currency
-        string status "active | suspended"
         decimal shipping_fee
         decimal free_shipping_threshold
         string hero_style
         string accent_color
+        string status "active or suspended"
     }
+
     CATEGORIES {
         int id PK
         int store_id FK
         string name
         string slug
     }
+
     PRODUCTS {
         int id PK
         int store_id FK
@@ -197,128 +256,183 @@ erDiagram
         json variants
         string status
     }
+
     ORDERS {
         int id PK
         string order_number UK
         int store_id FK
-        uuid customer_id "nullable (guest)"
+        uuid customer_id "Neon Auth user, optional"
         string customer_email
         json shipping_address
-        json items "price snapshot"
+        json items "purchase snapshot"
         decimal subtotal
         decimal shipping_cost
         decimal total
+        string payment_method
         string payment_status
         string order_status
         string tracking_number
     }
 ```
 
-- Order line items are stored as a **JSON snapshot** (name, price, quantity, variant, image) so historical orders stay accurate even if a product later changes.
-- Indexes exist on `stores.slug`, `orders.order_number`, `orders.store_id` and `products.store_id`.
+**Lifecycles**
+
+- Order status: `placed` → `confirmed` → `processing` → `shipped` → `delivered` (or `cancelled`)
+- Payment status: `pending`, `paid`, `failed`, `refunded`
+- Store status: `active` or `suspended`
+
+Cascading deletes are configured so removing a store removes its categories, products, and orders. Indexes exist on `stores.slug`, `products.store_id`, `orders.store_id`, and `orders.order_number`.
 
 ---
 
-## 🔐 Roles & Permissions
+## API Reference
 
-| Capability | Guest | Customer | Merchant | Admin |
-| --- | :---: | :---: | :---: | :---: |
-| Browse stores & products | ✅ | ✅ | ✅ | ✅ |
-| Place an order | ✅ | ✅ | ✅ | ✅ |
-| View own order history | ❌ | ✅ | ✅ | ✅ |
-| Create / manage own store | ❌ | ✅ (becomes merchant) | ✅ | ❌ |
-| Manage products, categories, orders | ❌ | ❌ | ✅ (own store only) | ❌ |
-| Upload images / use AI tools | ❌ | ❌ | ✅ | ✅ |
-| Merchant analytics | ❌ | ❌ | ✅ | ❌ |
-| Platform analytics, suspend stores | ❌ | ❌ | ❌ | ✅ |
+**Base URL (local):** `http://localhost:5000`. All responses follow a `{ success, ... }` envelope.
 
-> Creating a store promotes a signed-in user to the `merchant` role inside a single database transaction. Admin accounts cannot create stores or become merchants.
+### Express API
+
+<details open>
+<summary><b>Public and optionally authenticated</b></summary>
+
+| Method | Endpoint | Description |
+| :--- | :--- | :--- |
+| `GET` | `/` | Health check |
+| `GET` | `/api/products` | List products. Query: `storeId` or `storeSlug`, `categoryId` |
+| `GET` | `/api/categories` | List a store's categories with product counts. Query: `storeId` or `storeSlug` (required) |
+| `POST` | `/api/orders/checkout` | Place an order. Token optional, linking the order to the user if present |
+| `GET` | `/api/orders/receipt/:orderIdentifier` | Fetch an order receipt by order number |
+| `GET` | `/api/orders/customer/my-orders` | Signed-in customer's orders. Query: `storeSlug` or `storeId` (optional) |
+
+</details>
+
+<details>
+<summary><b>Authenticated users (any role)</b></summary>
+
+| Method | Endpoint | Description |
+| :--- | :--- | :--- |
+| `POST` | `/api/stores` | Create a store (promotes the user to merchant). Admins are rejected |
+| `POST` | `/api/stores/onboard-merchant` | Elevate the current user to the merchant role |
+| `GET` | `/api/stores/me` | Get the current user's store |
+| `PUT` | `/api/stores/me` | Update store settings and branding |
+| `POST` | `/api/upload/single` | Upload one image (field `image`) |
+| `POST` | `/api/upload/multiple` | Upload up to 5 images (field `images`) |
+| `POST` | `/api/upload/ai-transform` | AI recolor or background removal. Rate limited |
+| `POST` | `/api/upload/ai-on-model` | AI on-model photography. Rate limited |
+
+</details>
+
+<details>
+<summary><b>Merchant only</b></summary>
+
+| Method | Endpoint | Description |
+| :--- | :--- | :--- |
+| `GET` | `/api/products/merchant` | List the merchant's products |
+| `POST` | `/api/products` | Create a product |
+| `PUT` | `/api/products/:id` | Update a product |
+| `DELETE` | `/api/products/:id` | Delete a product |
+| `POST` | `/api/categories` | Create a category |
+| `DELETE` | `/api/categories/:id` | Delete a category |
+| `GET` | `/api/orders/merchant` | List store orders. Query: `status` (optional) |
+| `PATCH` | `/api/orders/merchant/:id/status` | Update order status, payment status, tracking number |
+| `GET` | `/api/analytics/merchant` | Store analytics |
+
+</details>
+
+<details>
+<summary><b>Platform admin only</b></summary>
+
+| Method | Endpoint | Description |
+| :--- | :--- | :--- |
+| `GET` | `/api/stores/admin/all` | All stores with product count, order count, and revenue |
+| `GET` | `/api/stores/admin/merchants` | All merchants and their stores |
+| `PATCH` | `/api/stores/admin/:storeId/status` | Toggle a store between active and suspended |
+| `GET` | `/api/analytics/platform` | Platform-wide analytics and top stores |
+
+</details>
+
+### Neon Function (public, read-only)
+
+| Method | Endpoint | Description |
+| :--- | :--- | :--- |
+| `GET` | `/stores/public/featured` | Up to 12 newest active stores |
+| `GET` | `/stores/slug/:slug` | Store details by slug (`403` if suspended, `404` if missing) |
+| `GET` | `/products` | Active products for a store. Query: `storeSlug` or `storeId`, `categoryId`, `search` |
+| `GET` | `/products/:id` | Active product with category and store info |
+| `GET` | `/health` | Health check |
 
 ---
 
-## 🧾 How Checkout Works
+## Frontend Routes
 
-Checkout is designed so the **client is never trusted with money or stock**:
-
-1. The client sends only `productId`, `quantity` and optional `variant` per item, plus customer and shipping details.
-2. Inside a **single database transaction**, the server loads each product from the DB (must belong to the store and be `active`).
-3. Stock is decremented with an **atomic conditional update** (`stock >= quantity`), so concurrent buyers can't oversell — if any line fails, the whole order rolls back.
-4. Prices, subtotal, **shipping cost** (including the free-shipping threshold) and total are **recalculated server-side**.
-5. An unguessable order number is generated, and the order is stored with a price snapshot. Payment method defaults to **Cash on Delivery**, with payment status managed by the merchant.
-
----
-
-## 🤖 AI-Powered Product Imagery
-
-Merchants can polish product photos directly in the dashboard, powered by Cloudinary's generative AI:
-
-| Tool | What it does |
-| --- | --- |
-| **Generative Recolor** | Describe an object (e.g. "jacket") and pick a target colour to recolour it |
-| **Background Removal** | Strip the background for clean catalog shots |
-| **On-Model Photography** | Place a garment on a model image with a chosen pose and background (virtual try-on style) |
-
-These endpoints are **rate-limited to 10 requests/minute** per user, and inputs (prompts, colours, URLs) are strictly validated before anything reaches Cloudinary.
+| Area | Route | Access |
+| :--- | :--- | :--- |
+| **Platform** | `/` | Public landing page |
+| **Storefront** | `/store/:storeSlug` | Public |
+| | `/store/:storeSlug/products` | Public |
+| | `/store/:storeSlug/products/:productId` | Public |
+| | `/store/:storeSlug/cart` | Public |
+| | `/store/:storeSlug/checkout` | Public |
+| | `/store/:storeSlug/order-confirmation/:orderNumber` | Public |
+| | `/store/:storeSlug/login` | Customer sign-in and sign-up |
+| | `/store/:storeSlug/orders` | Signed-in customer |
+| **Merchant** | `/merchant/login`, `/merchant/register` | Public |
+| | `/merchant/store-setup` | Signed-in user without a store |
+| | `/merchant`, `/merchant/products`, `/merchant/categories`, `/merchant/orders`, `/merchant/settings` | Merchant |
+| **Admin** | `/admin/login` | Public (no registration) |
+| | `/admin`, `/admin/stores`, `/admin/merchants` | Admin |
 
 ---
 
-## 🛡️ Security Highlights
-
-- **Token verification** with JWKS (issuer + optional audience), session-table fallback, and role resolution from the database
-- **Role-based route guards** (`requireAuth`, `optionalAuth`, `requireRole`) on every protected endpoint
-- **Tenant scoping** — merchants can only read or change data belonging to their own store
-- **Server-authoritative pricing and atomic stock control** at checkout
-- **Upload hardening** — 10 MB limit, max 5 files, **magic-byte MIME detection** (JPEG, PNG, GIF, WebP, AVIF, SVG), and SVG sanitisation that rejects scripts, event handlers, `foreignObject`, XXE entities and more
-- **SSRF protection** for remote image URLs — HTTPS only, no credentials or custom ports, and private / loopback / link-local / reserved IPv4 & IPv6 ranges are blocked
-- **Rate limiting** on AI endpoints, keyed per user (falling back to IP)
-- **Production build guard** — the Vite build fails unless `VITE_BASE_URL` is a deployed HTTPS backend (no `localhost`)
-- **Suspended stores** are blocked from public store pages and checkout
-- Secrets live in environment variables; the server `.env` is git-ignored
-
----
-
-## 📂 Project Structure
+## Project Structure
 
 ```text
 Orbivo-E-Commerce-Platform-App/
-├── client/                         # React + Vite frontend
-│   ├── public/                     # Logos, hero & feature images
-│   └── src/
-│       ├── components/
-│       │   ├── common/             # AuthCard, ProductCard, Spinner
-│       │   ├── merchant/           # products, orders, settings components
-│       │   └── public/             # landing, storefront, cart, checkout, product-detail
-│       ├── context/                # AuthContext, CartContext
-│       ├── pages/
-│       │   ├── public/             # Landing, Storefront, Cart, Checkout, Orders…
-│       │   ├── merchant/           # Dashboard, Products, Categories, Orders, Settings
-│       │   └── admin/              # Dashboard, Stores & Merchants management
-│       ├── config/api.ts           # Axios instance + request interceptor
-│       ├── auth.ts                 # Neon Auth client
-│       └── App.tsx                 # Route map & protected routes
+├── client/                          # React 19 + Vite single-page app
+│   ├── public/                      # Logos, favicon, demo imagery
+│   ├── src/
+│   │   ├── auth.ts                  # Neon Auth client
+│   │   ├── config/api.ts            # Axios instance + request-routing interceptor
+│   │   ├── context/                 # AuthContext, CartContext
+│   │   ├── utils/storeAccent.ts     # Accent presets + CSS-variable theming
+│   │   ├── components/
+│   │   │   ├── common/              # AuthCard, ProductCard, Spinner
+│   │   │   ├── merchant/            # products, orders, settings (branding, shipping, hero, accent)
+│   │   │   └── public/              # landing, storefront (4 heroes), product-detail, cart, checkout
+│   │   └── pages/
+│   │       ├── public/              # Landing, storefront, cart, checkout, customer pages
+│   │       ├── merchant/            # Dashboard, products, categories, orders, settings, setup
+│   │       └── admin/               # Dashboard, stores, merchants
+│   ├── vercel.json                  # SPA rewrite
+│   └── vite.config.ts               # Tailwind plugin + production URL guard
 │
-└── server/                         # Express + Prisma backend
-    ├── config/                     # Prisma (pg adapter) & Cloudinary setup
-    ├── controllers/                # analytics, category, order, product, store, upload
-    ├── middleware/                 # auth (JWKS / RBAC), upload & image validation
-    ├── routes/                     # Express routers (mounted under /api/*)
-    ├── services/neonUser.ts        # Queries against the neon_auth schema
-    ├── utils/imageValidation.ts    # MIME, SVG and SSRF safety helpers
-    ├── functions/index.ts          # Neon Function: public read-only API
-    ├── prisma/                     # schema.prisma & migrations
-    ├── neon.ts                     # Neon Functions config
-    └── server.ts                   # App entry point
+└── server/                          # Express 5 + Prisma 7 API
+    ├── server.ts                    # App entry, middleware, route mounting
+    ├── routes/                      # analytics, categories, orders, products, stores, uploads
+    ├── controllers/                 # Business logic for each resource
+    ├── middleware/
+    │   ├── auth.ts                  # JWKS verification, optionalAuth, requireAuth, requireRole
+    │   └── upload.ts                # Multer config + content validation
+    ├── services/neonUser.ts         # Queries against the neon_auth schema
+    ├── utils/imageValidation.ts     # Magic-byte checks, SVG sanitising, SSRF guard
+    ├── config/                      # Prisma client (pg adapter), Cloudinary
+    ├── functions/index.ts           # Neon Function: public read-only API
+    ├── neon.ts                      # Neon Function definition (dev port 8787)
+    ├── prisma/                      # schema.prisma + SQL migrations
+    ├── prisma7.config.ts            # Prisma CLI configuration
+    └── vercel.json                  # Vercel Node deployment config
 ```
 
 ---
 
-## 🚀 Getting Started
+## Getting Started
 
 ### Prerequisites
 
-- **Node.js 20.19+** (or 22+) and npm
-- A **[Neon](https://neon.tech)** project with **Neon Auth** enabled (PostgreSQL + authentication)
-- A **[Cloudinary](https://cloudinary.com)** account (for uploads; generative AI features require the matching Cloudinary add-ons)
+- **Node.js** `^20.19.0` or `>=22.12.0` (required by Vite 8) and **npm** 9+
+- A **[Neon](https://neon.tech)** project with **Neon Auth** enabled
+- A **[Cloudinary](https://cloudinary.com)** account (the AI features depend on the corresponding Cloudinary AI add-ons being available on your plan)
+
+> The setup steps below are derived from reading the source code. If a command differs on your machine, the [Environment Variables](#environment-variables) table is the source of truth for configuration.
 
 ### 1. Clone the repository
 
@@ -331,26 +445,26 @@ cd Orbivo-E-Commerce-Platform-App
 
 ```bash
 cd server
-npm install            # also runs `prisma generate` via postinstall
+npm install        # also runs `prisma generate` via the postinstall script
 ```
 
-Create `server/.env` (see [Environment Variables](#-environment-variables)), then apply the database migrations:
+Create `server/.env` (see [Environment Variables](#environment-variables)), then apply the database migration:
 
 ```bash
 npx prisma migrate deploy --config prisma7.config.ts
 ```
 
-Start the API (defaults to **http://localhost:5000**):
+> **Tip:** Prisma migrations on Neon work best over the **direct (unpooled)** connection string. Because `prisma7.config.ts` reads `DATABASE_URL`, point it at the direct URL while migrating, then switch back to the pooled URL for the running app.
+
+Start the API:
 
 ```bash
-npm run server         # development (nodemon + tsx)
-# or
-npm start              # run with tsx
+npm run server     # nodemon + tsx, http://localhost:5000
 ```
 
-### 3. Set up the public read API (Neon Function)
+### 3. Provide the public Neon Function
 
-The storefront reads store and product data through the Neon Function defined in `server/functions/index.ts` (configured in `server/neon.ts`, dev port `8787`). Deploy or run it with the Neon tooling for your project and copy its base URL into `VITE_NEON_FUNCTIONS_URL` for the client.
+The storefront loads store and product data through the Neon Function defined in `server/neon.ts` and `server/functions/index.ts` (local dev port `8787`). Run or deploy it with Neon's tooling, then note its base URL for the next step. It needs the same `DATABASE_URL` configured.
 
 ### 4. Set up the frontend
 
@@ -359,221 +473,134 @@ cd ../client
 npm install
 ```
 
-Create `client/.env.development`, then start Vite (defaults to **http://localhost:5173**):
+Create `client/.env` (see below), then:
 
 ```bash
-npm run dev
+npm run dev        # http://localhost:5173
 ```
 
-### 5. Try it out
+### 5. Create a platform admin
 
-| URL | Purpose |
-| --- | --- |
-| `/` | Platform landing page |
-| `/merchant/register` | Create a merchant account, then complete the store setup wizard |
-| `/store/<your-slug>` | Your live storefront |
-| `/admin/login` | Admin portal (requires an account with the `admin` role) |
+There is intentionally no public admin registration. Sign up a normal account through the app, then promote it in your Neon SQL editor:
 
-> **Creating an admin:** admin accounts are not self-service. Register a user, then set `role = 'admin'` on that user in the `neon_auth."user"` table.
-
-### Useful scripts
-
-| Location | Command | Description |
-| --- | --- | --- |
-| `client` | `npm run dev` | Start the Vite dev server |
-| `client` | `npm run build` | Type-check and create a production build |
-| `client` | `npm run lint` | Lint with oxlint |
-| `client` | `npm run preview` | Preview the production build |
-| `server` | `npm run server` | Dev server with auto-reload |
-| `server` | `npm start` | Start the API |
-| `server` | `npm run build` | Compile TypeScript |
-
----
-
-## 🔧 Environment Variables
-
-> ⚠️ Never commit real values. Use the placeholders below as a template.
-
-### `server/.env`
-
-```env
-# Server
-PORT=5000
-
-# Neon PostgreSQL
-DATABASE_URL=postgresql://<user>:<password>@<host>/<db>?sslmode=require
-
-# Neon Auth
-NEON_AUTH_BASE_URL=https://<your-neon-auth-url>
-NEON_AUTH_JWKS_URL=https://<your-neon-auth-url>/.well-known/jwks.json
-NEON_AUTH_AUDIENCE=            # optional
-
-# Cloudinary
-CLOUDINARY_CLOUD_NAME=<cloud-name>
-CLOUDINARY_API_KEY=<api-key>
-CLOUDINARY_API_SECRET=<api-secret>
+```sql
+UPDATE neon_auth."user"
+SET role = 'admin'
+WHERE email = 'you@example.com';
 ```
 
-### `client/.env.development`
+You can then sign in at `/admin/login`. Admin accounts cannot create stores or act as merchants.
 
-```env
-VITE_BASE_URL=http://localhost:5000          # Express API
-VITE_NEON_AUTH_URL=https://<your-neon-auth-url>
-VITE_NEON_FUNCTIONS_URL=https://<your-neon-function-url>   # public read API
-```
+### 6. Try the merchant flow
 
-For production builds, `VITE_BASE_URL` **must** be your deployed **HTTPS** backend URL, otherwise the build intentionally fails.
-
----
-
-## 📡 API Reference
-
-Base URL: `http://localhost:5000` · Protected routes expect `Authorization: Bearer <token>`.
-All responses follow the shape `{ "success": boolean, "message"?: string, ... }`.
-
-<details>
-<summary><b>🏪 Stores</b> — <code>/api/stores</code></summary>
-
-| Method | Endpoint | Access | Description |
-| --- | --- | --- | --- |
-| `POST` | `/` | Authenticated | Create a store (promotes user to merchant) |
-| `POST` | `/onboard-merchant` | Authenticated | Assign the merchant role |
-| `GET` | `/me` | Authenticated | Get the caller's store |
-| `PUT` | `/me` | Authenticated | Update store settings |
-| `GET` | `/admin/all` | Admin | List all stores |
-| `GET` | `/admin/merchants` | Admin | List all merchants |
-| `PATCH` | `/admin/:storeId/status` | Admin | Toggle store active / suspended |
-
-</details>
-
-<details>
-<summary><b>📦 Products</b> — <code>/api/products</code></summary>
-
-| Method | Endpoint | Access | Description |
-| --- | --- | --- | --- |
-| `GET` | `/` | Public | List products (`storeId` / `storeSlug`, `categoryId`) |
-| `GET` | `/merchant` | Merchant | List the merchant's products |
-| `POST` | `/` | Merchant | Create a product |
-| `PUT` | `/:id` | Merchant | Update a product |
-| `DELETE` | `/:id` | Merchant | Delete a product |
-
-</details>
-
-<details>
-<summary><b>🗂️ Categories</b> — <code>/api/categories</code></summary>
-
-| Method | Endpoint | Access | Description |
-| --- | --- | --- | --- |
-| `GET` | `/` | Public | List categories |
-| `POST` | `/` | Merchant | Create a category |
-| `DELETE` | `/:id` | Merchant | Delete a category |
-
-</details>
-
-<details>
-<summary><b>🧾 Orders</b> — <code>/api/orders</code></summary>
-
-| Method | Endpoint | Access | Description |
-| --- | --- | --- | --- |
-| `POST` | `/checkout` | Public (optional auth) | Place an order |
-| `GET` | `/receipt/:orderIdentifier` | Public | Fetch a receipt by order number |
-| `GET` | `/customer/my-orders` | Authenticated | Customer order history |
-| `GET` | `/merchant` | Merchant | Orders for the merchant's store |
-| `PATCH` | `/merchant/:id/status` | Merchant | Update order status, payment status, tracking number |
-
-**Order statuses:** `placed`, `confirmed`, `processing`, `shipped`, `delivered`, `cancelled`
-**Payment statuses:** `pending`, `paid`, `failed`, `refunded`
-
-</details>
-
-<details>
-<summary><b>🖼️ Uploads & AI</b> — <code>/api/upload</code></summary>
-
-| Method | Endpoint | Access | Description |
-| --- | --- | --- | --- |
-| `POST` | `/single` | Authenticated | Upload one image (`image` field) |
-| `POST` | `/multiple` | Authenticated | Upload up to 5 images (`images` field) |
-| `POST` | `/ai-transform` | Authenticated · rate-limited | Recolour or remove background |
-| `POST` | `/ai-on-model` | Authenticated · rate-limited | Generate an on-model product photo |
-
-</details>
-
-<details>
-<summary><b>📊 Analytics</b> — <code>/api/analytics</code></summary>
-
-| Method | Endpoint | Access | Description |
-| --- | --- | --- | --- |
-| `GET` | `/merchant` | Merchant | Store revenue, orders, AOV, low stock, recent orders |
-| `GET` | `/platform` | Admin | Platform totals and top stores |
-
-</details>
-
-<details>
-<summary><b>⚡ Neon Function (public read API)</b></summary>
-
-| Method | Endpoint | Description |
-| --- | --- | --- |
-| `GET` | `/health` | Health check |
-| `GET` | `/stores/featured` | Latest active stores |
-| `GET` | `/stores/slug/:slug` | Store details by slug (403 if suspended) |
-| `GET` | `/products` | Active products with `storeSlug`/`storeId`, `categoryId`, `search` filters |
-| `GET` | `/products/:id` | Single active product with category & store info |
-
-Read-only (`GET`, `HEAD`, `OPTIONS`) with CORS enabled.
-
-</details>
+1. Visit `/merchant/register` and create an account.
+2. Complete the **store setup** wizard.
+3. Add categories and products from the merchant console.
+4. Open `/store/<your-slug>` in another tab, add items to the cart, and check out.
 
 ---
 
-## ☁️ Deployment
+## Environment Variables
 
-Both apps include Vercel configuration:
+### Server (`server/.env`)
 
-- **Frontend** — `client/vercel.json` rewrites all routes to `/` so client-side routing works on refresh. Set `VITE_BASE_URL` (HTTPS), `VITE_NEON_AUTH_URL` and `VITE_NEON_FUNCTIONS_URL` in the build environment.
-- **Backend** — `server/vercel.json` builds `server.ts` with `@vercel/node`. Add all server environment variables in the project settings.
-- **Database & Auth** — Neon (PostgreSQL + Neon Auth).
-- **Media** — Cloudinary.
+| Variable | Required | Description |
+| :--- | :---: | :--- |
+| `DATABASE_URL` | ✅ | Neon PostgreSQL connection string used by Prisma and the Neon Function |
+| `NEON_AUTH_JWKS_URL` | ✅ | Neon Auth JWKS endpoint used to verify JWTs |
+| `NEON_AUTH_BASE_URL` | ✅ | Neon Auth base URL, used as the expected token issuer |
+| `NEON_AUTH_AUDIENCE` | | Expected token audience, validated when set |
+| `CLOUDINARY_CLOUD_NAME` | ✅ | Cloudinary cloud name (the server throws on startup if missing) |
+| `CLOUDINARY_API_KEY` | ✅ | Cloudinary API key |
+| `CLOUDINARY_API_SECRET` | ✅ | Cloudinary API secret |
+| `PORT` | | API port, defaults to `5000` |
+
+### Client (`client/.env`)
+
+| Variable | Required | Description |
+| :--- | :---: | :--- |
+| `VITE_BASE_URL` | ✅ in production | Express API base URL. Defaults to `http://localhost:5000` in development. Production builds fail if it is missing or not an HTTPS, non-localhost URL |
+| `VITE_NEON_AUTH_URL` | ✅ | Neon Auth endpoint for the browser auth client |
+| `VITE_NEON_FUNCTIONS_URL` | ✅ | Base URL of the deployed Neon Function that serves public reads |
+
+> **Never commit real secrets.** `server/.env` is git-ignored. Note that `VITE_*` values are embedded in the browser bundle, so they must never contain secrets.
 
 ---
 
-## 🗺️ Roadmap
+## Available Scripts
 
-- [ ] Online payments (Stripe / Razorpay) alongside Cash on Delivery
-- [ ] Coupons and discount codes
-- [ ] Real customer reviews and ratings (the current review/testimonial sections are static UI)
+### Server
+
+| Command | Description |
+| :--- | :--- |
+| `npm run server` | Start the API in watch mode (`nodemon` + `tsx`) |
+| `npm start` | Start the API once with `tsx` |
+| `npm run build` | Compile TypeScript to `dist/` |
+
+### Client
+
+| Command | Description |
+| :--- | :--- |
+| `npm run dev` | Start the Vite dev server with HMR |
+| `npm run build` | Type-check with `tsc -b`, then build the production bundle |
+| `npm run preview` | Preview the production build locally |
+| `npm run lint` | Run Oxlint |
+
+---
+
+## Deployment
+
+The project is set up for a split deployment:
+
+- **Frontend**: deploy `client/` to **Vercel**. `client/vercel.json` rewrites every path to the SPA entry so client-side routing works. Set `VITE_BASE_URL`, `VITE_NEON_AUTH_URL`, and `VITE_NEON_FUNCTIONS_URL` in the build environment, because Vite inlines them at build time.
+- **API**: deploy `server/` to **Vercel** using `@vercel/node` (configured in `server/vercel.json`). Provide all server environment variables in the project settings.
+- **Database, auth, and public function**: hosted on **Neon**.
+
+---
+
+## Known Limitations and Roadmap
+
+Being transparent about what is and is not implemented yet:
+
+**Current limitations**
+
+- Payments are **Cash on Delivery only**. Payment status is updated manually by the merchant.
+- The `coupon_code` and `discount` fields exist in the schema, but checkout does not apply discounts yet.
+- Merchants can create categories and assign products to them, and the API supports filtering by `categoryId`, but the storefront UI does not expose a category filter yet.
+- Product reviews and storefront testimonials are **static sample content**, not user-generated.
+- There is no automated test suite yet.
+- Product lists are not paginated.
+- Several internal identifiers still use earlier working names (for example the `Cartiva` prefix on `localStorage` keys and Cloudinary folders).
+
+**Roadmap ideas**
+
+- [ ] Online payments (Stripe or Razorpay) alongside COD
+- [ ] Coupon and discount engine using the existing schema fields
+- [ ] Real customer reviews and ratings with moderation
 - [ ] Transactional emails (order confirmation, shipping updates)
-- [ ] Server-side pagination and search for large catalogs
-- [ ] Automated tests (unit, API and end-to-end) and a CI pipeline
-- [ ] Docker setup for one-command local development
+- [ ] Category filter on the storefront catalog (the API already supports it)
+- [ ] Pagination and server-side search for large catalogs
+- [ ] Unit and integration tests, plus CI
+- [ ] Restrict CORS to known origins
 - [ ] Custom domains per store
 
 ---
 
-## 🤝 Contributing
+## Acknowledgements
 
-Contributions, issues and feature requests are welcome!
+The React frontend builds on **StoreiFly**, an open-source multi-tenant storefront project by GreatStack and contributors, distributed under the MIT License. The original license and copyright notice are preserved in [`client/LICENSE.md`](client/LICENSE.md). This repository extends it with the Neon-backed Express and Prisma API layer, the Neon Function for public reads, hardened upload and AI image pipelines, and the platform administration features described above.
 
-1. Fork the project
-2. Create your branch: `git checkout -b feature/amazing-feature`
-3. Commit your changes: `git commit -m "feat: add amazing feature"`
-4. Push to the branch: `git push origin feature/amazing-feature`
-5. Open a Pull Request
-
-See [`client/CONTRIBUTING.md`](client/CONTRIBUTING.md), [`client/CODE_OF_CONDUCT.md`](client/CODE_OF_CONDUCT.md) and [`client/SECURITY.md`](client/SECURITY.md) for guidelines.
+Built with [Neon](https://neon.tech), [Prisma](https://www.prisma.io), [Cloudinary](https://cloudinary.com), [Vercel](https://vercel.com), [Lucide](https://lucide.dev), and [React Hot Toast](https://react-hot-toast.com).
 
 ---
 
-## 📄 License & Acknowledgements
+## License
 
-Distributed under the **MIT License** — see [`client/LICENSE.md`](client/LICENSE.md).
-
-The frontend foundation originates from the open-source **StoreiFly** storefront and merchant-dashboard project (MIT-licensed); this repository extends it with its own backend, database design, authentication flow and AI image tooling.
-
-Built with the help of [React](https://react.dev), [Express](https://expressjs.com), [Prisma](https://www.prisma.io), [Neon](https://neon.tech), [Cloudinary](https://cloudinary.com) and [Tailwind CSS](https://tailwindcss.com).
+Distributed under the **MIT License**. See [`client/LICENSE.md`](client/LICENSE.md) for details.
 
 ---
 
-## 👨‍💻 Author
+## Author
 
 **Ayush Verma**
 
@@ -581,6 +608,6 @@ Built with the help of [React](https://react.dev), [Express](https://expressjs.c
 
 <div align="center">
 
-⭐ If you found this project useful, please consider giving it a star!
+If you found this project useful or interesting, consider giving it a ⭐
 
 </div>
